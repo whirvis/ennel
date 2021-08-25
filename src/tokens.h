@@ -54,6 +54,11 @@ ennel_symb
 	CRLY_OPEN, CRLY_CLOSE, /* {, } */
 	BRKT_OPEN, BRKT_CLOSE, /* [, ] */
 	
+	/* comments */
+	CMNT_LINE,
+	CMNT_MULTI_OPEN,
+	CMNT_MULTI_CLOSE,
+	
 	/* other */
 	DOT, COMMA, COLON, SEMICOLON,
 } ennel_symb;
