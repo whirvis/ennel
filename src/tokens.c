@@ -12,15 +12,103 @@
 
 #define ename(enum) enum, #enum
 
-typedef struct
-symb_desc {
-	ennel_symb symb;
+enum token_type
+{
+	UNKNOWN, END,
+	
+	SYMB, /* ennel_symb */
+	WORD, /* ennel_word */
+	STR,  /* ennel_str  */
+	NUM,  /* ennel_num  */
+} token_type;
+
+enum ennel_symb
+{
+	NO_SYMB,
+
+	/* maths */
+	ADD, ADD_EQ, /* +, += */
+	SUB, SUB_EQ, /* -, -= */
+	MUL, MUL_EQ, /* *, *= */
+	DIV, DIV_EQ, /* /, /= */
+	MOD, MOD_EQ, /* %, %= */
+	POW, POW_EQ, /* @, @= */
+	NRT, NRT_EQ, /* #, #= */
+	
+	/* bitwise */
+	BIT_NOT, BIT_AND, /*  ~, &  */
+	BIT_OR,  BIT_XOR, /*  |, ^  */
+	
+	/* logical */
+	LGC_NOT, LGC_AND, /*  !, && */
+	LGC_OR,  LGC_XOR, /* ||, ^^ */
+	LGC_LT,  LGC_LTE, /*  <, <= */
+	LGC_GT,  LGC_GTE, /*  >, >= */
+	
+	/* grouping */
+	PRNS_OPEN, PRNS_CLOSE, /* (, ) */
+	CRLY_OPEN, CRLY_CLOSE, /* {, } */
+	BRKT_OPEN, BRKT_CLOSE, /* [, ] */
+	
+	/* comments */
+	CMNT_LINE,
+	CMNT_MULTI_OPEN,
+	CMNT_MULTI_CLOSE,
+	
+	/* other */
+	DOT, COMMA, COLON, SEMICOLON,
+};
+
+enum ennel_rsvd
+{
+	UNRESERVED,
+	
+	/* declarations */
+	VAR, FUNC,
+	
+	/* control statements */
+	RETURN,
+};
+
+struct ennel_word
+{
+	enum ennel_rsvd type;
+	char *iden;
+	int len;
+};
+
+struct ennel_str
+{
+	char *str;
+	int len;
+};
+
+struct ennel_num
+{
+	int64_t val;
+};
+
+struct ennel_token
+{
+	enum token_type type;
+	union {
+		struct ennel_word word;
+		struct ennel_str str;
+		enum ennel_symb symb;
+		struct ennel_num num;
+	};
+};
+
+struct
+symb_desc
+{
+	enum ennel_symb symb;
 	char *name;
 	char *symbol;
 	int len;
-} symb_desc;
+};
 
-static symb_desc
+static struct symb_desc
 symb_descs[] = {
 	{ ename(NO_SYMB), NULL, 0 },
 	
@@ -76,17 +164,17 @@ symb_descs[] = {
 	{ ename(SEMICOLON), ";", 1 },
 };
 
-const int SYMB_DESC_AMT = sizeof(symb_descs) / sizeof(symb_desc);
+const int SYMB_DESC_AMT = sizeof(symb_descs) / sizeof(struct symb_desc);
 
-typedef struct
+struct
 rsvd_word {
-	ennel_rsvd type;
+	enum ennel_rsvd type;
 	char *name;
 	char *iden;
 	int len;
-} rsvd_word;
+};
 
-static rsvd_word
+static struct rsvd_word
 rsvd_words[] = {
 	{ ename(UNRESERVED), NULL, 0 },
 	
@@ -98,16 +186,16 @@ rsvd_words[] = {
 	{ ename(RETURN), "return", 6 },
 };
 	
-const int WORD_TOKEN_AMT = sizeof(rsvd_words) / sizeof(rsvd_word);
+const int WORD_TOKEN_AMT = sizeof(rsvd_words) / sizeof(struct rsvd_word);
 
-static ennel_symb
+static enum ennel_symb
 read_symb(FILE *f)
 {
 	int loc = ftell(f), cand_amt = 0;
-	symb_desc cands[SYMB_DESC_AMT];
+	struct symb_desc cands[SYMB_DESC_AMT];
 
 	for (int ci = 0; ci < SYMB_DESC_AMT; ci++) {	
-		symb_desc cand = symb_descs[ci];
+		struct symb_desc cand = symb_descs[ci];
 		
 		/*
 		 * Read the symbol text, with the length being no longer than that of
@@ -154,9 +242,9 @@ read_symb(FILE *f)
 		return NO_SYMB;
 	}
 	
-	symb_desc winner = cands[0];
+	struct symb_desc winner = cands[0];
 	for (int i = 1; i < cand_amt; i++) {
-		symb_desc cand = cands[i];
+		struct symb_desc cand = cands[i];
 		if(cand.len > winner.len) {
 			winner = cand;
 		}
@@ -170,10 +258,10 @@ read_symb(FILE *f)
 	return winner.symb;
 }
 
-static ennel_word
+static struct ennel_word
 read_word(FILE *f, bool *is_word)
 {
-	ennel_word word;
+	struct ennel_word word;
 	word.type = UNRESERVED;
 	
 	char iden[WORD_LEN + 1];
@@ -197,7 +285,7 @@ read_word(FILE *f, bool *is_word)
 	}
 	
 	for (int i = 0; i < WORD_TOKEN_AMT; i++) {
-		rsvd_word cand = rsvd_words[i];
+		struct rsvd_word cand = rsvd_words[i];
 		if(!strcmp(iden, cand.iden)) {
 			word.type = cand.type;
 			break;
@@ -213,10 +301,10 @@ read_word(FILE *f, bool *is_word)
 	return word;
 }
 
-static ennel_str
+static struct ennel_str
 read_str(FILE *f)
 {
-	ennel_str str;
+	struct ennel_str str;
 	
 	char q = fgetc(f);
 	if (q != '\"') {
@@ -244,10 +332,10 @@ read_str(FILE *f)
 	return str;
 }
 
-static ennel_num
+static struct ennel_num
 read_num(FILE *f, bool *is_num) {
 	
-	ennel_num num;
+	struct ennel_num num;
 	num.val = 0;
 	
 	char ns[NUM_LEN + 1];
@@ -274,10 +362,10 @@ read_num(FILE *f, bool *is_num) {
 	return num;
 }
 
-ennel_token
+struct ennel_token
 read_token(FILE *f)
 {
-	ennel_token token;
+	struct ennel_token token;
 	token.type = UNKNOWN;
 	
 	int c = fgetc(f);
@@ -291,14 +379,14 @@ read_token(FILE *f)
 		return token;
 	}
 	
-	ennel_symb symb = read_symb(f);
+	enum ennel_symb symb = read_symb(f);
 	if (symb != NO_SYMB) {
 		token.type = SYMB;
 		token.symb = symb;
 		return token;
 	}
 	
-	ennel_str str = read_str(f);
+	struct ennel_str str = read_str(f);
 	if (str.len >= 0) {
 		token.type = STR;
 		token.str  = str;
@@ -306,7 +394,7 @@ read_token(FILE *f)
 	}
 		
 	bool is_num = false;
-	ennel_num num = read_num(f, &is_num);
+	struct ennel_num num = read_num(f, &is_num);
 	if (is_num) {
 		token.type = NUM;
 		token.num = num;
@@ -314,7 +402,7 @@ read_token(FILE *f)
 	}
 	
 	bool is_word = false;
-	ennel_word word = read_word(f, &is_word);
+	struct ennel_word word = read_word(f, &is_word);
 	if (is_word) {
 		token.type = WORD;
 		token.word = word;
