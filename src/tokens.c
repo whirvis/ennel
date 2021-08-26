@@ -63,11 +63,6 @@ symb_descs[] = {
 	{ ename(SYMB_BRKT_OPEN),  "[", 1 },
 	{ ename(SYMB_BRKT_CLOSE), "]", 1 },
 	
-	/* comments */
-	{ ename(SYMB_CMNT_LINE),        "//", 2 },
-	{ ename(SYMB_CMNT_MULTI_OPEN),  "/*", 2 },
-	{ ename(SYMB_CMNT_MULTI_CLOSE), "*/", 2 },
-	
 	/* other */
 	{ ename(SYMB_DOT),       ".", 1 },
 	{ ename(SYMB_COMMA),     ",", 1 },

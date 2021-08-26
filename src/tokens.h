@@ -53,11 +53,6 @@ enum ennel_symb
 	SYMB_CRLY_OPEN, SYMB_CRLY_CLOSE, /* {, } */
 	SYMB_BRKT_OPEN, SYMB_BRKT_CLOSE, /* [, ] */
 	
-	/* comments */
-	SYMB_CMNT_LINE,
-	SYMB_CMNT_MULTI_OPEN,
-	SYMB_CMNT_MULTI_CLOSE,
-	
 	/* other */
 	SYMB_DOT, SYMB_COMMA,
 	SYMB_COLON, SYMB_SEMICOLON,
