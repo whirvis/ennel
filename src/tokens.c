@@ -24,55 +24,55 @@ symb_desc
 static struct symb_desc
 symb_descs[] = {
 	/* maths */
-	{ ename(ADD),     "+", 1 },
-	{ ename(SUB),     "-", 1 },
-	{ ename(MUL),     "*", 1 },
-	{ ename(DIV),     "/", 1 },
-	{ ename(MOD),     "%", 1 },
-	{ ename(POW),     "@", 1 },
-	{ ename(NRT),     "#", 1 },
-	{ ename(ADD_EQ), "+=", 2 },
-	{ ename(SUB_EQ), "-=", 2 },
-	{ ename(MUL_EQ), "*=", 2 },
-	{ ename(DIV_EQ), "/=", 2 },
-	{ ename(MOD_EQ), "%=", 2 },
-	{ ename(POW_EQ), "@=", 2 },
-	{ ename(NRT_EQ), "#=", 2 },
+	{ ename(SYMB_ADD),     "+", 1 },
+	{ ename(SYMB_SUB),     "-", 1 },
+	{ ename(SYMB_MUL),     "*", 1 },
+	{ ename(SYMB_DIV),     "/", 1 },
+	{ ename(SYMB_MOD),     "%", 1 },
+	{ ename(SYMB_POW),     "@", 1 },
+	{ ename(SYMB_NRT),     "#", 1 },
+	{ ename(SYMB_ADD_EQ), "+=", 2 },
+	{ ename(SYMB_SUB_EQ), "-=", 2 },
+	{ ename(SYMB_MUL_EQ), "*=", 2 },
+	{ ename(SYMB_DIV_EQ), "/=", 2 },
+	{ ename(SYMB_MOD_EQ), "%=", 2 },
+	{ ename(SYMB_POW_EQ), "@=", 2 },
+	{ ename(SYMB_NRT_EQ), "#=", 2 },
 	
 	/* bitwise */
-	{ ename(BIT_NOT), "~", 1 },
-	{ ename(BIT_AND), "&", 1 },
-	{ ename(BIT_OR),  "|", 1 },
-	{ ename(BIT_XOR), "^", 1 },
+	{ ename(SYMB_BIT_NOT), "~", 1 },
+	{ ename(SYMB_BIT_AND), "&", 1 },
+	{ ename(SYMB_BIT_OR),  "|", 1 },
+	{ ename(SYMB_BIT_XOR), "^", 1 },
 	
 	/* logical */
-	{ ename(LGC_NOT),  "!", 1 },
-	{ ename(LGC_LT),   "<", 1 },
-	{ ename(LGC_GT),   ">", 1 },
-	{ ename(LGC_AND), "&&", 2 },
-	{ ename(LGC_OR),  "||", 2 },
-	{ ename(LGC_XOR), "^^", 2 },
-	{ ename(LGC_LTE), "<=", 2 },
-	{ ename(LGC_GTE), ">=", 2 },
+	{ ename(SYMB_LGC_NOT),  "!", 1 },
+	{ ename(SYMB_LGC_LT),   "<", 1 },
+	{ ename(SYMB_LGC_GT),   ">", 1 },
+	{ ename(SYMB_LGC_AND), "&&", 2 },
+	{ ename(SYMB_LGC_OR),  "||", 2 },
+	{ ename(SYMB_LGC_XOR), "^^", 2 },
+	{ ename(SYMB_LGC_LTE), "<=", 2 },
+	{ ename(SYMB_LGC_GTE), ">=", 2 },
 	
 	/* grouping */
-	{ ename(PRNS_OPEN),  "(", 1 },
-	{ ename(PRNS_CLOSE), ")", 1 },
-	{ ename(CRLY_OPEN),  "{", 1 },
-	{ ename(CRLY_CLOSE), "}", 1 },
-	{ ename(BRKT_OPEN),  "[", 1 },
-	{ ename(BRKT_CLOSE), "]", 1 },
+	{ ename(SYMB_PRNS_OPEN),  "(", 1 },
+	{ ename(SYMB_PRNS_CLOSE), ")", 1 },
+	{ ename(SYMB_CRLY_OPEN),  "{", 1 },
+	{ ename(SYMB_CRLY_CLOSE), "}", 1 },
+	{ ename(SYMB_BRKT_OPEN),  "[", 1 },
+	{ ename(SYMB_BRKT_CLOSE), "]", 1 },
 	
 	/* comments */
-	{ ename(CMNT_LINE),        "//", 2 },
-	{ ename(CMNT_MULTI_OPEN),  "/*", 2 },
-	{ ename(CMNT_MULTI_CLOSE), "*/", 2 },
+	{ ename(SYMB_CMNT_LINE),        "//", 2 },
+	{ ename(SYMB_CMNT_MULTI_OPEN),  "/*", 2 },
+	{ ename(SYMB_CMNT_MULTI_CLOSE), "*/", 2 },
 	
 	/* other */
-	{ ename(DOT),       ".", 1 },
-	{ ename(COMMA),     ",", 1 },
-	{ ename(COLON),     ":", 1 },
-	{ ename(SEMICOLON), ";", 1 },
+	{ ename(SYMB_DOT),       ".", 1 },
+	{ ename(SYMB_COMMA),     ",", 1 },
+	{ ename(SYMB_COLON),     ":", 1 },
+	{ ename(SYMB_SEMICOLON), ";", 1 },
 };
 
 const int SYMB_DESC_AMT = sizeof(symb_descs) / sizeof(struct symb_desc);
@@ -88,11 +88,11 @@ rsvd_word {
 static struct rsvd_word
 rsvd_words[] = {
 	/* declarations */
-	{ ename(VAR),   "var", 3 },
-	{ ename(FUNC), "func", 4 },
+	{ ename(RSVD_VAR),   "var", 3 },
+	{ ename(RSVD_FUNC), "func", 4 },
 	
 	/* control statements */
-	{ ename(RETURN), "return", 6 },
+	{ ename(RSVD_RETURN), "return", 6 },
 };
 	
 const int WORD_TOKEN_AMT = sizeof(rsvd_words) / sizeof(struct rsvd_word);
@@ -148,7 +148,7 @@ read_symb(FILE *f)
 	}
 	
 	if (cand_amt <= 0) {
-		return NO_SYMB;
+		return SYMB_NONE;
 	}
 	
 	struct symb_desc winner = cands[0];
@@ -171,7 +171,7 @@ static struct ennel_word
 read_word(FILE *f, bool *is_word)
 {
 	struct ennel_word word;
-	word.type = UNRESERVED;
+	word.type = RSVD_NONE;
 	
 	char iden[WORD_LEN + 1];
 	int len = 0;
@@ -201,7 +201,7 @@ read_word(FILE *f, bool *is_word)
 		}
 	}
 	
-	if (word.type != UNRESERVED) {
+	if (word.type != RSVD_NONE) {
 		word.iden = calloc(sizeof(char), len + 1);
 		memcpy(word.iden, iden, len);
 		word.len = len;

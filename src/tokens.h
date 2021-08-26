@@ -7,12 +7,13 @@
 
 enum token_type
 {
-	UNKNOWN, END,
+	TOKEN_UNKNOWN,
+	TOKEN_END,
 	
-	SYMB, /* ennel_symb */
-	WORD, /* ennel_word */
-	STR,  /* ennel_str  */
-	NUM,  /* ennel_num  */
+	TOKEN_SYMB, /* ennel_symb */
+	TOKEN_WORD, /* ennel_word */
+	TOKEN_STR,  /* ennel_str  */
+	TOKEN_NUM,  /* ennel_num  */
 };
 
 /**
@@ -26,39 +27,40 @@ enum token_type
  */
 enum ennel_symb
 {
-	NO_SYMB,
+	SYMB_NONE,
 
 	/* maths */
-	ADD, ADD_EQ, /* +, += */
-	SUB, SUB_EQ, /* -, -= */
-	MUL, MUL_EQ, /* *, *= */
-	DIV, DIV_EQ, /* /, /= */
-	MOD, MOD_EQ, /* %, %= */
-	POW, POW_EQ, /* @, @= */
-	NRT, NRT_EQ, /* #, #= */
+	SYMB_ADD, SYMB_ADD_EQ, /* +, += */
+	SYMB_SUB, SYMB_SUB_EQ, /* -, -= */
+	SYMB_MUL, SYMB_MUL_EQ, /* *, *= */
+	SYMB_DIV, SYMB_DIV_EQ, /* /, /= */
+	SYMB_MOD, SYMB_MOD_EQ, /* %, %= */
+	SYMB_POW, SYMB_POW_EQ, /* @, @= */
+	SYMB_NRT, SYMB_NRT_EQ, /* #, #= */
 	
 	/* bitwise */
-	BIT_NOT, BIT_AND, /*  ~, &  */
-	BIT_OR,  BIT_XOR, /*  |, ^  */
+	SYMB_BIT_NOT, SYMB_BIT_AND, /*  ~, &  */
+	SYMB_BIT_OR,  SYMB_BIT_XOR, /*  |, ^  */
 	
 	/* logical */
-	LGC_NOT, LGC_AND, /*  !, && */
-	LGC_OR,  LGC_XOR, /* ||, ^^ */
-	LGC_LT,  LGC_LTE, /*  <, <= */
-	LGC_GT,  LGC_GTE, /*  >, >= */
+	SYMB_LGC_NOT, SYMB_LGC_AND, /*  !, && */
+	SYMB_LGC_OR,  SYMB_LGC_XOR, /* ||, ^^ */
+	SYMB_LGC_LT,  SYMB_LGC_LTE, /*  <, <= */
+	SYMB_LGC_GT,  SYMB_LGC_GTE, /*  >, >= */
 	
 	/* grouping */
-	PRNS_OPEN, PRNS_CLOSE, /* (, ) */
-	CRLY_OPEN, CRLY_CLOSE, /* {, } */
-	BRKT_OPEN, BRKT_CLOSE, /* [, ] */
+	SYMB_PRNS_OPEN, SYMB_PRNS_CLOSE, /* (, ) */
+	SYMB_CRLY_OPEN, SYMB_CRLY_CLOSE, /* {, } */
+	SYMB_BRKT_OPEN, SYMB_BRKT_CLOSE, /* [, ] */
 	
 	/* comments */
-	CMNT_LINE,
-	CMNT_MULTI_OPEN,
-	CMNT_MULTI_CLOSE,
+	SYMB_CMNT_LINE,
+	SYMB_CMNT_MULTI_OPEN,
+	SYMB_CMNT_MULTI_CLOSE,
 	
 	/* other */
-	DOT, COMMA, COLON, SEMICOLON,
+	SYMB_DOT, SYMB_COMMA,
+	SYMB_COLON, SYMB_SEMICOLON,
 };
 
 /**
@@ -71,13 +73,13 @@ enum ennel_symb
  */
 enum ennel_rsvd
 {
-	UNRESERVED,
+	RSVD_NONE,
 	
 	/* declarations */
-	VAR, FUNC,
+	RSVD_VAR, RSVD_FUNC,
 	
 	/* control statements */
-	RETURN,
+	RSVD_RETURN,
 };
 
 /**
