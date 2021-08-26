@@ -64,7 +64,7 @@ symb_descs[] = {
 	{ ename(BRKT_CLOSE), "]", 1 },
 	
 	/* comments */
-	{ ename(CMNT_LINE),        "//", 1 },
+	{ ename(CMNT_LINE),        "//", 2 },
 	{ ename(CMNT_MULTI_OPEN),  "/*", 2 },
 	{ ename(CMNT_MULTI_CLOSE), "*/", 2 },
 	
@@ -212,7 +212,7 @@ read_word(FILE *f, bool *is_word)
 
 static struct ennel_str
 read_str(FILE *f)
-{
+{	
 	struct ennel_str str;
 	
 	char q = fgetc(f);
