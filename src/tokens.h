@@ -5,7 +5,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-enum token_type;
+enum token_type
+{
+	UNKNOWN, END,
+	
+	SYMB, /* ennel_symb */
+	WORD, /* ennel_word */
+	STR,  /* ennel_str  */
+	NUM,  /* ennel_num  */
+};
 
 /**
  * A symbol token in the Ennel programming language.
@@ -16,7 +24,42 @@ enum token_type;
  * having any whitespace that separates them) and still be parsed. For this
  * reason, reserved words are not considered symbols.
  */
-enum ennel_symb;
+enum ennel_symb
+{
+	NO_SYMB,
+
+	/* maths */
+	ADD, ADD_EQ, /* +, += */
+	SUB, SUB_EQ, /* -, -= */
+	MUL, MUL_EQ, /* *, *= */
+	DIV, DIV_EQ, /* /, /= */
+	MOD, MOD_EQ, /* %, %= */
+	POW, POW_EQ, /* @, @= */
+	NRT, NRT_EQ, /* #, #= */
+	
+	/* bitwise */
+	BIT_NOT, BIT_AND, /*  ~, &  */
+	BIT_OR,  BIT_XOR, /*  |, ^  */
+	
+	/* logical */
+	LGC_NOT, LGC_AND, /*  !, && */
+	LGC_OR,  LGC_XOR, /* ||, ^^ */
+	LGC_LT,  LGC_LTE, /*  <, <= */
+	LGC_GT,  LGC_GTE, /*  >, >= */
+	
+	/* grouping */
+	PRNS_OPEN, PRNS_CLOSE, /* (, ) */
+	CRLY_OPEN, CRLY_CLOSE, /* {, } */
+	BRKT_OPEN, BRKT_CLOSE, /* [, ] */
+	
+	/* comments */
+	CMNT_LINE,
+	CMNT_MULTI_OPEN,
+	CMNT_MULTI_CLOSE,
+	
+	/* other */
+	DOT, COMMA, COLON, SEMICOLON,
+};
 
 /**
  * An identifier reserved by the Ennel programming language.
@@ -26,19 +69,49 @@ enum ennel_symb;
  * parts of the language. For example, "var" cannot be the name of a variable,
  * as it is used to indicate a new variable in the program.
  */
-enum ennel_rsvd;
+enum ennel_rsvd
+{
+	UNRESERVED,
+	
+	/* declarations */
+	VAR, FUNC,
+	
+	/* control statements */
+	RETURN,
+};
 
 /**
  * A parsed word token. This may either be a generic identifier, or a keyword
  * reserved by the Ennel programming language.
  */
-struct ennel_word;
+struct ennel_word
+{
+	enum ennel_rsvd type;
+	char *iden;
+	int len;
+};
 
-struct ennel_str;
+struct ennel_str
+{
+	char *str;
+	int len;
+};
 
-struct ennel_num;
+struct ennel_num
+{
+	int64_t val;
+};
 
-struct ennel_token;
+struct ennel_token
+{
+	enum token_type type;
+	union {
+		struct ennel_word word;
+		struct ennel_str str;
+		enum ennel_symb symb;
+		struct ennel_num num;
+	};
+};
 
 /**
  * Reads an Ennel token from the file at its current position. If no token can
