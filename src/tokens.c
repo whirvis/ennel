@@ -23,8 +23,6 @@ symb_desc
 
 static struct symb_desc
 symb_descs[] = {
-	{ ename(NO_SYMB), NULL, 0 },
-	
 	/* maths */
 	{ ename(ADD),     "+", 1 },
 	{ ename(SUB),     "-", 1 },
@@ -89,8 +87,6 @@ rsvd_word {
 
 static struct rsvd_word
 rsvd_words[] = {
-	{ ename(UNRESERVED), NULL, 0 },
-	
 	/* declarations */
 	{ ename(VAR),   "var", 3 },
 	{ ename(FUNC), "func", 4 },
