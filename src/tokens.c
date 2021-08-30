@@ -64,6 +64,7 @@ symb_descs[] = {
 	{ ename(SYMB_BRKT_CLOSE), "]", 1 },
 	
 	/* other */
+	{ ename(SYMB_EQ),        "=", 1 },
 	{ ename(SYMB_DOT),       ".", 1 },
 	{ ename(SYMB_COMMA),     ",", 1 },
 	{ ename(SYMB_COLON),     ":", 1 },
@@ -196,12 +197,9 @@ read_word(FILE *f, bool *is_word)
 		}
 	}
 	
-	if (word.type != RSVD_NONE) {
-		word.iden = calloc(sizeof(char), len + 1);
-		memcpy(word.iden, iden, len);
-		word.len = len;
-	}
-	
+	word.iden = calloc(sizeof(char), len + 1);
+	memcpy(word.iden, iden, len);
+	word.len = len;
 	return word;
 }
 
@@ -266,52 +264,50 @@ read_num(FILE *f, bool *is_num) {
 	return num;
 }
 
-struct ennel_token
-read_token(FILE *f)
+void
+read_token(FILE *f, struct ennel_token *token)
 {
-	struct ennel_token token;
-	token.type = UNKNOWN;
+	memset(token, 0x00, sizeof(*token));
+	token->type = TOKEN_UNKNOWN;
 	
 	int c = fgetc(f);
-	while(isspace(c)) {
+	while (isspace(c)) {
 		c = fgetc(f);
 	}
 	fseek(f, -1, SEEK_CUR);
 	
-	if(c == EOF) {
-		token.type = END;
-		return token;
+	if (c == EOF) {
+		token->type = TOKEN_END;
+		return;
 	}
 	
 	enum ennel_symb symb = read_symb(f);
-	if (symb != NO_SYMB) {
-		token.type = SYMB;
-		token.symb = symb;
-		return token;
+	if (symb != SYMB_NONE) {
+		token->type = TOKEN_SYMB;
+		token->symb = symb;
+		return;
 	}
 	
 	struct ennel_str str = read_str(f);
 	if (str.len >= 0) {
-		token.type = STR;
-		token.str  = str;
-		return token;
+		token->type = TOKEN_STR;
+		token->str  = str;
+		return;
 	}
-		
+	
 	bool is_num = false;
 	struct ennel_num num = read_num(f, &is_num);
 	if (is_num) {
-		token.type = NUM;
-		token.num = num;
-		return token;
+		token->type = TOKEN_NUM;
+		token->num = num;
+		return;
 	}
 	
 	bool is_word = false;
 	struct ennel_word word = read_word(f, &is_word);
 	if (is_word) {
-		token.type = WORD;
-		token.word = word;
-		return token;
+		token->type = TOKEN_WORD;
+		token->word = word;
+		return;
 	}
-	
-	return token;
 }

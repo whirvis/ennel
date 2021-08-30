@@ -7,6 +7,7 @@
 
 enum token_type
 {
+	TOKEN_NIHILO,
 	TOKEN_UNKNOWN,
 	TOKEN_END,
 	
@@ -54,7 +55,7 @@ enum ennel_symb
 	SYMB_BRKT_OPEN, SYMB_BRKT_CLOSE, /* [, ] */
 	
 	/* other */
-	SYMB_DOT, SYMB_COMMA,
+	SYMB_EQ, SYMB_DOT, SYMB_COMMA,
 	SYMB_COLON, SYMB_SEMICOLON,
 };
 
@@ -116,7 +117,7 @@ struct ennel_token
  *
  * @param f the file to read from.
  */
-struct ennel_token
-read_token(FILE *f);
+void
+read_token(FILE *f, struct ennel_token *token);
 
 #endif /* ENNEL_TOKENS_H_ */
