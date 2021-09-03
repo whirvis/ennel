@@ -1,7 +1,7 @@
-/* Ennel lang */
+/* Ennel project */
 #include "tokens.h"
 
-/* C-std library */
+/* STD-C libraries */
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
