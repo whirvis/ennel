@@ -93,8 +93,8 @@ rsvd_descs[] = {
 	
 const int RSVD_DESC_AMT = sizeof(rsvd_descs) / sizeof(struct rsvd_desc);
 
-static enum ennel_symb
-read_symb(FILE *f)
+static void
+read_symb(FILE *f, enum ennel_symb *symb)
 {
 	int loc = ftell(f), cand_amt = 0;
 	struct symb_desc cands[SYMB_DESC_AMT];
@@ -144,7 +144,8 @@ read_symb(FILE *f)
 	}
 	
 	if (cand_amt <= 0) {
-		return SYMB_NONE;
+		*symb = SYMB_NONE;
+		return;
 	}
 	
 	struct symb_desc winner = cands[0];
@@ -160,7 +161,7 @@ read_symb(FILE *f)
 	 * from being read a second time.
 	 */
 	fseek(f, winner.len, SEEK_CUR);
-	return winner.symb;
+	*symb = winner.symb;
 }
 
 static void
@@ -205,16 +206,14 @@ read_word(FILE *f, enum ennel_rsvd *rsvd, struct ennel_iden *iden, bool *is_word
 	}
 }
 
-static struct ennel_str
-read_str(FILE *f)
+static void
+read_str(FILE *f, struct ennel_str *str)
 {	
-	struct ennel_str str;
-	
 	char q = fgetc(f);
 	if (q != '\"') {
 		fseek(f, -1, SEEK_CUR);
-		str.len = -1;
-		return str;
+		str->len = -1;
+		return;
 	}
 	
 	char cs[STR_LEN + 1];
@@ -229,19 +228,13 @@ read_str(FILE *f)
 	}
 	cs[len] = '\0';
 	
-	str.str = calloc(sizeof(char), len + 1);
-	memcpy(str.str, cs, len);
-	str.len = len;
-	
-	return str;
+	str->len = len;
+	str->str = calloc(sizeof(char), len + 1);
+	memcpy(str->str, cs, len);
 }
 
-static struct ennel_num
-read_num(FILE *f, bool *is_num) {
-	
-	struct ennel_num num;
-	num.val = 0;
-	
+static void
+read_num(FILE *f, struct ennel_num *num, bool *is_num) {
 	char ns[NUM_LEN + 1];
 	int len = 0;
 	while (len < NUM_LEN) {
@@ -257,13 +250,11 @@ read_num(FILE *f, bool *is_num) {
 	
 	if(len <= 0) {
 		*is_num = false;
-		return num;
-	} else {
-		*is_num = true;
+		return;
 	}
 	
-	num.val = atol(ns);
-	return num;
+	*is_num = true;
+	num->val = atol(ns);
 }
 
 void
@@ -314,7 +305,8 @@ read_token(FILE *f, struct ennel_token *token)
 	}
 	
 	bool is_num = false;
-	struct ennel_num num = read_num(f, &is_num);
+	struct ennel_num num;
+	read_num(f, &num, &is_num);
 	if (is_num) {
 		token->type = TOKEN_NUM;
 		token->num = num;
