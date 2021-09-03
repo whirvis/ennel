@@ -7,12 +7,12 @@
 
 enum token_type
 {
-	TOKEN_NIHILO,
 	TOKEN_UNKNOWN,
 	TOKEN_END,
 	
 	TOKEN_SYMB, /* ennel_symb */
-	TOKEN_WORD, /* ennel_word */
+	TOKEN_RSVD, /* ennel_rsvd */
+	TOKEN_IDEN, /* ennel_iden */
 	TOKEN_STR,  /* ennel_str  */
 	TOKEN_NUM,  /* ennel_num  */
 };
@@ -78,21 +78,16 @@ enum ennel_rsvd
 	RSVD_RETURN,
 };
 
-/**
- * A parsed word token. This may either be a generic identifier, or a keyword
- * reserved by the Ennel programming language.
- */
-struct ennel_word
+struct ennel_iden
 {
-	enum ennel_rsvd type;
-	char *iden;
 	int len;
+	char *str;
 };
 
 struct ennel_str
 {
-	char *str;
 	int len;
+	char *str;
 };
 
 struct ennel_num
@@ -104,9 +99,10 @@ struct ennel_token
 {
 	enum token_type type;
 	union {
-		struct ennel_word word;
-		struct ennel_str str;
 		enum ennel_symb symb;
+		enum ennel_rsvd rsvd;
+		struct ennel_iden iden;
+		struct ennel_str str;
 		struct ennel_num num;
 	};
 };
