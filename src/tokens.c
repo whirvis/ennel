@@ -74,15 +74,15 @@ symb_descs[] = {
 const int SYMB_DESC_AMT = sizeof(symb_descs) / sizeof(struct symb_desc);
 
 struct
-rsvd_word {
+rsvd_desc {
 	enum ennel_rsvd type;
 	char *name;
 	char *iden;
 	int len;
 };
 
-static struct rsvd_word
-rsvd_words[] = {
+static struct rsvd_desc
+rsvd_descs[] = {
 	/* declarations */
 	{ ename(RSVD_VAR),   "var", 3 },
 	{ ename(RSVD_FUNC), "func", 4 },
@@ -91,7 +91,7 @@ rsvd_words[] = {
 	{ ename(RSVD_RETURN), "return", 6 },
 };
 	
-const int WORD_TOKEN_AMT = sizeof(rsvd_words) / sizeof(struct rsvd_word);
+const int RSVD_DESC_AMT = sizeof(rsvd_descs) / sizeof(struct rsvd_desc);
 
 static enum ennel_symb
 read_symb(FILE *f)
