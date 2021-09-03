@@ -1,5 +1,7 @@
+/* Ennel lang */
 #include "tokens.h"
 
+/* C-std library */
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>

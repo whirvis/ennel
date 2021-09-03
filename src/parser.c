@@ -1,7 +1,8 @@
-#include "../include/parser.h"
+/* Ennel lang */
+#include "parser.h"
+#include "tokens.h"
 
-#include "../include/tokens.h"
-
+/* C-std library */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

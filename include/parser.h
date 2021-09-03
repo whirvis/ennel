@@ -1,8 +1,10 @@
 #ifndef ENNEL_PARSER_H_
 #define ENNEL_PARSER_H_
 
+/* Ennel lang */
 #include "tokens.h"
 
+/* C-std library */
 #include <stdio.h>
 
 struct syntax_tree
