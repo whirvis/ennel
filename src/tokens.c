@@ -163,44 +163,46 @@ read_symb(FILE *f)
 	return winner.symb;
 }
 
-static struct ennel_word
-read_word(FILE *f, bool *is_word)
+static void
+read_word(FILE *f, enum ennel_rsvd *rsvd, struct ennel_iden *iden, bool *is_word)
 {
-	struct ennel_word word;
-	word.type = RSVD_NONE;
-	
-	char iden[WORD_LEN + 1];
+	char word[WORD_LEN + 1];
 	int len = 0;
 	while (len < WORD_LEN) {
 		char c = fgetc(f);
-		if(!isalnum(c)) {
+		if (len == 0 && !isalpha(c) && c != '_') {
+			fseek(f, -1, SEEK_CUR);
+			break;
+		} else if (!isalnum(c) && c != '_') {
 			fseek(f, -1, SEEK_CUR);
 			break;
 		}
-		iden[len] = c;
+		word[len] = c;
 		len++;
 	}
-	iden[len] = '\0';
+	word[len] = '\0';
 	
 	if (len <= 0) {
 		*is_word = false;
-		return word;
+		return;
 	} else {
 		*is_word = true;
 	}
 	
-	for (int i = 0; i < WORD_TOKEN_AMT; i++) {
-		struct rsvd_word cand = rsvd_words[i];
-		if(!strcmp(iden, cand.iden)) {
-			word.type = cand.type;
+	*rsvd = RSVD_NONE;
+	for (int i = 0; i < RSVD_DESC_AMT; i++) {
+		struct rsvd_desc cand = rsvd_descs[i];
+		if(!strcmp(word, cand.iden)) {
+			*rsvd = cand.type;
 			break;
 		}
 	}
 	
-	word.iden = calloc(sizeof(char), len + 1);
-	memcpy(word.iden, iden, len);
-	word.len = len;
-	return word;
+	if(*rsvd == RSVD_NONE) {
+		iden->len = len;
+		iden->str = calloc(sizeof(char), len + 1);
+		memcpy(iden->str, word, len + 1);
+	}
 }
 
 static struct ennel_str
@@ -281,14 +283,30 @@ read_token(FILE *f, struct ennel_token *token)
 		return;
 	}
 	
-	enum ennel_symb symb = read_symb(f);
+	enum ennel_symb symb = SYMB_NONE;
+	read_symb(f, &symb);
 	if (symb != SYMB_NONE) {
 		token->type = TOKEN_SYMB;
 		token->symb = symb;
 		return;
 	}
 	
-	struct ennel_str str = read_str(f);
+	bool is_word;
+	enum ennel_rsvd rsvd;
+	struct ennel_iden iden;
+	read_word(f, &rsvd, &iden, &is_word);
+	if (is_word && rsvd != RSVD_NONE) {
+		token->type = TOKEN_RSVD;
+		token->rsvd = rsvd;
+		return;
+	} else if (is_word) {
+		token->type = TOKEN_IDEN;
+		token->iden = iden;
+		return;
+	}
+	
+	struct ennel_str str;
+	read_str(f, &str);
 	if (str.len >= 0) {
 		token->type = TOKEN_STR;
 		token->str  = str;
@@ -300,14 +318,6 @@ read_token(FILE *f, struct ennel_token *token)
 	if (is_num) {
 		token->type = TOKEN_NUM;
 		token->num = num;
-		return;
-	}
-	
-	bool is_word = false;
-	struct ennel_word word = read_word(f, &is_word);
-	if (is_word) {
-		token->type = TOKEN_WORD;
-		token->word = word;
 		return;
 	}
 }
